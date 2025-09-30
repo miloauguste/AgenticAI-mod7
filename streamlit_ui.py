@@ -21,20 +21,51 @@ load_dotenv()
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 try:
-    from autonomous_content_system import run_autonomous_content_system
+    # Try to import core components
     from main import run_content_pipeline
-    from enhanced_autonomous_system import run_enhanced_autonomous_system
-    from content_summarization_tools import GeminiSummarizationTool, AdvancedContentAnalyzer
-    from claude_content_generator import ClaudeContentGenerator, ClaudeContentOptimizer
     from human_feedback_system import (
         feedback_manager, FeedbackType, FeedbackStatus, 
         create_content_for_review, add_editor_feedback, 
         get_content_for_editing, submit_revised_content,
         save_content_draft, get_content_drafts
     )
+    
+    # Try to import optional components
+    try:
+        from autonomous_content_system import run_autonomous_content_system
+        HAS_AUTONOMOUS = True
+    except ImportError:
+        HAS_AUTONOMOUS = False
+        st.warning("⚠️ Advanced autonomous system not available (CrewAI dependency issue)")
+    
+    try:
+        from enhanced_autonomous_system import run_enhanced_autonomous_system
+        HAS_ENHANCED = True
+    except ImportError:
+        HAS_ENHANCED = False
+        st.warning("⚠️ Enhanced autonomous system not available")
+    
+    try:
+        from content_summarization_tools import GeminiSummarizationTool, AdvancedContentAnalyzer
+        HAS_GEMINI_TOOLS = True
+    except ImportError:
+        HAS_GEMINI_TOOLS = False
+        st.warning("⚠️ Gemini tools not available")
+    
+    try:
+        from claude_content_generator import ClaudeContentGenerator, ClaudeContentOptimizer
+        HAS_CLAUDE = True
+    except ImportError:
+        HAS_CLAUDE = False
+        st.warning("⚠️ Claude content generator not available")
+
 except ImportError as e:
-    st.error(f"Import Error: {e}")
-    st.stop()
+    st.error(f"Critical Import Error: {e}")
+    st.error("Please check your dependencies. Using basic functionality only.")
+    HAS_AUTONOMOUS = False
+    HAS_ENHANCED = False
+    HAS_GEMINI_TOOLS = False
+    HAS_CLAUDE = False
 
 # Page configuration
 st.set_page_config(
@@ -104,12 +135,33 @@ def main():
     st.markdown('<div class="main-header">🚀 AI Content Creation Studio</div>', unsafe_allow_html=True)
     st.markdown('<div style="text-align: center; color: #666; margin-bottom: 2rem;">Autonomous Multi-Agent Content Creation System</div>', unsafe_allow_html=True)
     
-    # Sidebar navigation
+    # Sidebar navigation - build pages based on available components
     st.sidebar.title("Navigation")
+    
+    available_pages = ["Content Creator", "📝 Human Editor Review", "📊 Content Analytics", "System Dashboard", "Content History"]
+    
+    if HAS_CLAUDE:
+        available_pages.insert(1, "🆕 Claude AI Studio")
+    
+    if HAS_GEMINI_TOOLS:
+        available_pages.insert(-3, "Gemini Analysis Tools")
+    
+    # Always show documentation and health
+    available_pages.extend(["API Documentation", "System Health"])
+    
     page = st.sidebar.selectbox(
         "Choose a page:",
-        ["Content Creator", "🆕 Claude AI Studio", "Gemini Analysis Tools", "📝 Human Editor Review", "📊 Content Analytics", "System Dashboard", "Content History", "API Documentation", "System Health"]
+        available_pages
     )
+    
+    # Show system status in sidebar
+    st.sidebar.markdown("---")
+    st.sidebar.subheader("🔧 System Status")
+    st.sidebar.write(f"✅ Basic Pipeline: Available")
+    st.sidebar.write(f"{'✅' if HAS_AUTONOMOUS else '❌'} Advanced System: {'Available' if HAS_AUTONOMOUS else 'Unavailable'}")
+    st.sidebar.write(f"{'✅' if HAS_ENHANCED else '❌'} Enhanced System: {'Available' if HAS_ENHANCED else 'Unavailable'}")
+    st.sidebar.write(f"{'✅' if HAS_CLAUDE else '❌'} Claude AI: {'Available' if HAS_CLAUDE else 'Unavailable'}")
+    st.sidebar.write(f"{'✅' if HAS_GEMINI_TOOLS else '❌'} Gemini Tools: {'Available' if HAS_GEMINI_TOOLS else 'Unavailable'}")
     
     if page == "Content Creator":
         content_creator_page()
@@ -192,10 +244,22 @@ def content_creator_page():
         st.subheader("Advanced Options")
         
         with st.expander("System Configuration"):
+            # Build available system modes based on what's imported
+            available_modes = ["Basic Pipeline (Fast)"]
+            
+            if HAS_AUTONOMOUS:
+                available_modes.append("Advanced Autonomous System (Comprehensive)")
+            
+            if HAS_ENHANCED and HAS_GEMINI_TOOLS:
+                available_modes.append("Enhanced with Gemini Analysis (Premium)")
+            
+            if HAS_CLAUDE:
+                available_modes.append("🆕 Claude AI-Powered (Elite)")
+            
             system_mode = st.radio(
                 "Processing Mode",
-                ["Basic Pipeline (Fast)", "Advanced Autonomous System (Comprehensive)", "Enhanced with Gemini Analysis (Premium)", "🆕 Claude AI-Powered (Elite)"],
-                help="Basic: 4-agent workflow, Advanced: 7-agent analysis, Enhanced: Gemini-powered content summarization, Claude AI: Advanced content generation"
+                available_modes,
+                help="Select from available content generation systems based on installed dependencies"
             )
             
             include_research = st.checkbox("Include Market Research", value=True)
@@ -310,36 +374,59 @@ def process_content_request(client_name, industry, content_type, content_brief,
         status_text.text("Processing client requirements...")
         time.sleep(1)
         
-        # Execute content creation
-        if "Claude AI-Powered" in system_mode:
+        # Execute content creation based on available systems
+        if "Claude AI-Powered" in system_mode and HAS_CLAUDE:
             progress_bar.progress(50)
             status_text.text("Running Claude AI-powered content generation...")
             
-            result = run_claude_content_system(
-                client_brief=enhanced_brief,
-                target_audience=target_audience,
-                content_goals=content_goals,
-                content_type=content_type,
-                keywords=keywords.split(',') if keywords else []
-            )
-        elif "Enhanced with Gemini" in system_mode:
+            try:
+                result = run_claude_content_system(
+                    client_brief=enhanced_brief,
+                    target_audience=target_audience,
+                    content_goals=content_goals,
+                    content_type=content_type,
+                    keywords=keywords.split(',') if keywords else []
+                )
+            except Exception as e:
+                st.error(f"Claude AI system error: {e}")
+                st.info("Falling back to basic pipeline...")
+                base_topic = content_brief.split('\n')[0] if content_brief else "Business content"
+                unique_topic = f"{base_topic} - Session {session_id} - {current_timestamp}"
+                result = run_content_pipeline(topic=unique_topic, content_type=content_type)
+                
+        elif "Enhanced with Gemini" in system_mode and HAS_ENHANCED and HAS_GEMINI_TOOLS:
             progress_bar.progress(50)
             status_text.text("Running enhanced system with Gemini analysis...")
             
-            result = run_enhanced_autonomous_system(
-                client_brief=enhanced_brief,
-                target_audience=target_audience,
-                content_goals=content_goals
-            )
-        elif "Advanced" in system_mode:
+            try:
+                result = run_enhanced_autonomous_system(
+                    client_brief=enhanced_brief,
+                    target_audience=target_audience,
+                    content_goals=content_goals
+                )
+            except Exception as e:
+                st.error(f"Enhanced system error: {e}")
+                st.info("Falling back to basic pipeline...")
+                base_topic = content_brief.split('\n')[0] if content_brief else "Business content"
+                unique_topic = f"{base_topic} - Session {session_id} - {current_timestamp}"
+                result = run_content_pipeline(topic=unique_topic, content_type=content_type)
+                
+        elif "Advanced" in system_mode and HAS_AUTONOMOUS:
             progress_bar.progress(50)
             status_text.text("Running advanced autonomous system...")
             
-            result = run_autonomous_content_system(
-                client_brief=enhanced_brief,
-                target_audience=target_audience,
-                content_goals=content_goals
-            )
+            try:
+                result = run_autonomous_content_system(
+                    client_brief=enhanced_brief,
+                    target_audience=target_audience,
+                    content_goals=content_goals
+                )
+            except Exception as e:
+                st.error(f"Advanced system error: {e}")
+                st.info("Falling back to basic pipeline...")
+                base_topic = content_brief.split('\n')[0] if content_brief else "Business content"
+                unique_topic = f"{base_topic} - Session {session_id} - {current_timestamp}"
+                result = run_content_pipeline(topic=unique_topic, content_type=content_type)
         else:
             progress_bar.progress(50)
             status_text.text("Running basic content pipeline...")

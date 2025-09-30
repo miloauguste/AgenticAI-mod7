@@ -1,0 +1,29 @@
+# Minimal requirements for Streamlit Community Cloud deployment
+streamlit
+pandas
+plotly
+matplotlib
+requests
+python-dotenv
+
+# Core LangChain stack (latest compatible versions)
+langchain
+langchain-openai
+langgraph
+openai
+
+# Enhanced search capabilities
+ddgs
+serpapi
+
+# AI providers
+anthropic
+google-generativeai
+
+# Utils
+beautifulsoup4
+lxml
+tiktoken
+
+# Optional: Try latest CrewAI that works with current Python
+crewai
