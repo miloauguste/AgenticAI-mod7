@@ -21,6 +21,7 @@ load_dotenv()
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 try:
+<<<<<<< HEAD
     # Try to import core components
     from main import run_content_pipeline
     from human_feedback_system import (
@@ -66,6 +67,21 @@ except ImportError as e:
     HAS_ENHANCED = False
     HAS_GEMINI_TOOLS = False
     HAS_CLAUDE = False
+=======
+    from autonomous_content_system import run_autonomous_content_system
+    from main import run_content_pipeline
+    from enhanced_autonomous_system import run_enhanced_autonomous_system
+    from content_summarization_tools import GeminiSummarizationTool, AdvancedContentAnalyzer
+    from claude_content_generator import ClaudeContentGenerator, ClaudeContentOptimizer
+    from human_feedback_system import (
+        feedback_manager, FeedbackType, FeedbackStatus, 
+        create_content_for_review, add_editor_feedback, 
+        get_content_for_editing, submit_revised_content
+    )
+except ImportError as e:
+    st.error(f"Import Error: {e}")
+    st.stop()
+>>>>>>> 916d15462f3282d375157da7460c0bb883cb0bcc
 
 # Page configuration
 st.set_page_config(
@@ -135,6 +151,7 @@ def main():
     st.markdown('<div class="main-header">🚀 AI Content Creation Studio</div>', unsafe_allow_html=True)
     st.markdown('<div style="text-align: center; color: #666; margin-bottom: 2rem;">Autonomous Multi-Agent Content Creation System</div>', unsafe_allow_html=True)
     
+<<<<<<< HEAD
     # Sidebar navigation - build pages based on available components
     st.sidebar.title("Navigation")
     
@@ -163,6 +180,15 @@ def main():
     st.sidebar.write(f"{'✅' if HAS_CLAUDE else '❌'} Claude AI: {'Available' if HAS_CLAUDE else 'Unavailable'}")
     st.sidebar.write(f"{'✅' if HAS_GEMINI_TOOLS else '❌'} Gemini Tools: {'Available' if HAS_GEMINI_TOOLS else 'Unavailable'}")
     
+=======
+    # Sidebar navigation
+    st.sidebar.title("Navigation")
+    page = st.sidebar.selectbox(
+        "Choose a page:",
+        ["Content Creator", "🆕 Claude AI Studio", "Gemini Analysis Tools", "📝 Human Editor Review", "📊 Content Analytics", "System Dashboard", "Content History", "API Documentation", "System Health"]
+    )
+    
+>>>>>>> 916d15462f3282d375157da7460c0bb883cb0bcc
     if page == "Content Creator":
         content_creator_page()
     elif page == "🆕 Claude AI Studio":
@@ -187,9 +213,12 @@ def content_creator_page():
     
     st.markdown('<div class="sub-header">📝 Content Creation Workspace</div>', unsafe_allow_html=True)
     
+<<<<<<< HEAD
     # Add info about content uniqueness
     st.info("🔄 **Content Uniqueness Guaranteed**: Each generation uses unique session IDs, timestamps, and varied research queries to ensure fresh, original content every time.")
     
+=======
+>>>>>>> 916d15462f3282d375157da7460c0bb883cb0bcc
     # Content creation form
     with st.form("content_creation_form"):
         st.subheader("Client Information")
@@ -244,6 +273,7 @@ def content_creator_page():
         st.subheader("Advanced Options")
         
         with st.expander("System Configuration"):
+<<<<<<< HEAD
             # Build available system modes based on what's imported
             available_modes = ["Basic Pipeline (Fast)"]
             
@@ -260,6 +290,12 @@ def content_creator_page():
                 "Processing Mode",
                 available_modes,
                 help="Select from available content generation systems based on installed dependencies"
+=======
+            system_mode = st.radio(
+                "Processing Mode",
+                ["Basic Pipeline (Fast)", "Advanced Autonomous System (Comprehensive)", "Enhanced with Gemini Analysis (Premium)", "🆕 Claude AI-Powered (Elite)"],
+                help="Basic: 4-agent workflow, Advanced: 7-agent analysis, Enhanced: Gemini-powered content summarization, Claude AI: Advanced content generation"
+>>>>>>> 916d15462f3282d375157da7460c0bb883cb0bcc
             )
             
             include_research = st.checkbox("Include Market Research", value=True)
@@ -314,6 +350,7 @@ def content_creator_page():
     
     # Display results outside the form context
     if st.session_state.get('show_results') and st.session_state.get('current_result'):
+<<<<<<< HEAD
         # Add a clear results button
         col1, col2 = st.columns([1, 4])
         with col1:
@@ -331,6 +368,8 @@ def content_creator_page():
         with col2:
             st.info("💡 Showing previous content generation results. Submit a new request to generate fresh content.")
         
+=======
+>>>>>>> 916d15462f3282d375157da7460c0bb883cb0bcc
         display_content_results(
             st.session_state.current_result, 
             st.session_state.get('current_client_name', 'Client')
@@ -347,6 +386,7 @@ def process_content_request(client_name, industry, content_type, content_brief,
     status_text = st.empty()
     
     try:
+<<<<<<< HEAD
         # Prepare enhanced brief with uniqueness factors
         import uuid
         import datetime
@@ -357,12 +397,19 @@ def process_content_request(client_name, industry, content_type, content_brief,
         enhanced_brief = f"""
         Content Generation Session: {session_id}
         Generated at: {current_timestamp}
+=======
+        # Prepare enhanced brief
+        enhanced_brief = f"""
+>>>>>>> 916d15462f3282d375157da7460c0bb883cb0bcc
         Client: {client_name}
         Industry: {industry}
         Content Type: {content_type}
         Request: {content_brief}
         Target Keywords: {keywords if keywords else 'Auto-generated'}
+<<<<<<< HEAD
         Unique Session ID: {session_id}
+=======
+>>>>>>> 916d15462f3282d375157da7460c0bb883cb0bcc
         """
         
         # Update progress
@@ -374,6 +421,7 @@ def process_content_request(client_name, industry, content_type, content_brief,
         status_text.text("Processing client requirements...")
         time.sleep(1)
         
+<<<<<<< HEAD
         # Execute content creation based on available systems
         if "Claude AI-Powered" in system_mode and HAS_CLAUDE:
             progress_bar.progress(50)
@@ -427,15 +475,53 @@ def process_content_request(client_name, industry, content_type, content_brief,
                 base_topic = content_brief.split('\n')[0] if content_brief else "Business content"
                 unique_topic = f"{base_topic} - Session {session_id} - {current_timestamp}"
                 result = run_content_pipeline(topic=unique_topic, content_type=content_type)
+=======
+        # Execute content creation
+        if "Claude AI-Powered" in system_mode:
+            progress_bar.progress(50)
+            status_text.text("Running Claude AI-powered content generation...")
+            
+            result = run_claude_content_system(
+                client_brief=enhanced_brief,
+                target_audience=target_audience,
+                content_goals=content_goals,
+                content_type=content_type,
+                keywords=keywords.split(',') if keywords else []
+            )
+        elif "Enhanced with Gemini" in system_mode:
+            progress_bar.progress(50)
+            status_text.text("Running enhanced system with Gemini analysis...")
+            
+            result = run_enhanced_autonomous_system(
+                client_brief=enhanced_brief,
+                target_audience=target_audience,
+                content_goals=content_goals
+            )
+        elif "Advanced" in system_mode:
+            progress_bar.progress(50)
+            status_text.text("Running advanced autonomous system...")
+            
+            result = run_autonomous_content_system(
+                client_brief=enhanced_brief,
+                target_audience=target_audience,
+                content_goals=content_goals
+            )
+>>>>>>> 916d15462f3282d375157da7460c0bb883cb0bcc
         else:
             progress_bar.progress(50)
             status_text.text("Running basic content pipeline...")
             
+<<<<<<< HEAD
             # Extract topic from brief for basic system with uniqueness
             base_topic = content_brief.split('\n')[0] if content_brief else "Business content"
             # Add session ID and timestamp to ensure uniqueness
             unique_topic = f"{base_topic} - Session {session_id} - {current_timestamp}"
             result = run_content_pipeline(topic=unique_topic, content_type=content_type)
+=======
+            # Extract topic from brief for basic system
+            topic = content_brief.split('\n')[0] if content_brief else "Business content"
+            result = run_content_pipeline(topic=topic, content_type=content_type)
+>>>>>>> 916d15462f3282d375157da7460c0bb883cb0bcc
         
         progress_bar.progress(75)
         status_text.text("Finalizing content and preparing deliverables...")
@@ -448,12 +534,19 @@ def process_content_request(client_name, industry, content_type, content_brief,
             # Store result in session state
             st.session_state.current_result = result
             st.session_state.current_client_name = client_name
+<<<<<<< HEAD
             st.session_state.content_generation_session = session_id
             
             # Add to history
             history_entry = {
                 "timestamp": current_timestamp,
                 "session_id": session_id,
+=======
+            
+            # Add to history
+            history_entry = {
+                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+>>>>>>> 916d15462f3282d375157da7460c0bb883cb0bcc
                 "client_name": client_name,
                 "industry": industry,
                 "content_type": content_type,
@@ -465,7 +558,11 @@ def process_content_request(client_name, industry, content_type, content_brief,
             
             # Set flag to display results outside form
             st.session_state.show_results = True
+<<<<<<< HEAD
             st.success(f"✅ Content generation completed! Unique session: {session_id}. Results displayed below.")
+=======
+            st.success("✅ Content generation completed! Results displayed below.")
+>>>>>>> 916d15462f3282d375157da7460c0bb883cb0bcc
             
         else:
             st.error("Content creation failed. Please check your inputs and try again.")
@@ -518,7 +615,11 @@ def display_content_results(result, client_name):
         st.metric("Readability", f"{readability:.1f}/100")
     
     # Content tabs
+<<<<<<< HEAD
     tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["📄 Final Content", "🔍 SEO Data", "✅ Quality Report", "📝 Human Feedback", "✏️ Content Editor", "📋 Raw Data"])
+=======
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["📄 Final Content", "🔍 SEO Data", "✅ Quality Report", "📝 Human Feedback", "📋 Raw Data"])
+>>>>>>> 916d15462f3282d375157da7460c0bb883cb0bcc
     
     with tab1:
         st.subheader("Generated Content")
@@ -566,9 +667,13 @@ def display_content_results(result, client_name):
         st.subheader("📝 Human Editor Feedback")
         
         # Create content for review if not already created
+<<<<<<< HEAD
         import uuid
         session_id = st.session_state.get('content_generation_session', str(uuid.uuid4())[:8])
         content_id = f"content_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{session_id}_{client_name.replace(' ', '_')}"
+=======
+        content_id = f"content_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{client_name.replace(' ', '_')}"
+>>>>>>> 916d15462f3282d375157da7460c0bb883cb0bcc
         content_title = f"{client_name} - {final_content.split('\n')[0][:50] if final_content else 'Content'}..."
         
         # Check if content already exists in feedback system
@@ -666,6 +771,7 @@ def display_content_results(result, client_name):
                         st.error("Please provide editor name and comments.")
     
     with tab5:
+<<<<<<< HEAD
         st.subheader("✏️ Interactive Content Editor")
         
         # Initialize content for editing
@@ -845,6 +951,8 @@ def display_content_results(result, client_name):
             st.info("No content to preview.")
     
     with tab6:
+=======
+>>>>>>> 916d15462f3282d375157da7460c0bb883cb0bcc
         st.subheader("Complete Result Data")
         st.json(result)
 
@@ -982,6 +1090,7 @@ def claude_ai_studio_page():
         
         # Display Claude AI results outside the form
         if st.session_state.get('show_claude_results') and st.session_state.get('claude_result'):
+<<<<<<< HEAD
             # Add a clear results button for Claude AI
             col1, col2 = st.columns([1, 4])
             with col1:
@@ -997,6 +1106,8 @@ def claude_ai_studio_page():
             with col2:
                 st.info("💡 Showing previous Claude AI generation results. Submit a new request to generate fresh content.")
             
+=======
+>>>>>>> 916d15462f3282d375157da7460c0bb883cb0bcc
             result = st.session_state.claude_result
             
             st.success("✅ Content Generated Successfully!")
@@ -1357,7 +1468,11 @@ def detailed_content_review():
         st.rerun()
     
     # Content display and editing
+<<<<<<< HEAD
     tab1, tab2, tab3, tab4 = st.tabs(["📄 Content Review", "📊 Feedback History", "✏️ Content Revision", "🔧 Advanced Editor"])
+=======
+    tab1, tab2, tab3 = st.tabs(["📄 Content Review", "📊 Feedback History", "✏️ Content Revision"])
+>>>>>>> 916d15462f3282d375157da7460c0bb883cb0bcc
     
     with tab1:
         st.subheader("Current Content")
@@ -1489,8 +1604,12 @@ def detailed_content_review():
         
         if st.button("💾 Save Revision", type="primary"):
             if revised_content != content_feedback.current_version:
+<<<<<<< HEAD
                 editor_name = st.session_state.get('editor_name', 'Anonymous')
                 success = submit_revised_content(content_id, revised_content, revision_notes, editor_name)
+=======
+                success = submit_revised_content(content_id, revised_content, revision_notes)
+>>>>>>> 916d15462f3282d375157da7460c0bb883cb0bcc
                 if success:
                     st.success("✅ Revision saved successfully!")
                     st.rerun()
@@ -1498,6 +1617,7 @@ def detailed_content_review():
                     st.error("Failed to save revision.")
             else:
                 st.warning("No changes detected in the content.")
+<<<<<<< HEAD
     
     with tab4:
         st.subheader("🔧 Advanced Content Editor")
@@ -1777,6 +1897,8 @@ def detailed_content_review():
             with col2:
                 st.subheader("Your Edits")
                 st.text_area("", st.session_state[editor_key], height=200, disabled=True, key=f"edited_compare_{content_id}")
+=======
+>>>>>>> 916d15462f3282d375157da7460c0bb883cb0bcc
 
 def quick_feedback_interface():
     """Quick feedback interface for rapid review."""

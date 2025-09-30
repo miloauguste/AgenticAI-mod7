@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.pyc
@@ -43,4 +44,51 @@ logs/
 .ipynb_checkpoints/
 
 # Environment variables
+=======
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+*.egg-info/
+.eggs/
+
+# Distribution / packaging
+dist/
+build/
+*.whl
+*.egg
+
+# Virtual environment
+.venv/
+venv/
+env/
+mod7/
+
+# Editor/IDE specific files
+.vscode/
+.idea/
+*.swp
+*.bak
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+logs/
+
+# Database files
+*.sqlite3
+*.db
+
+# Jupyter Notebook files
+.ipynb_checkpoints/
+
+# Environment variables
+>>>>>>> 916d15462f3282d375157da7460c0bb883cb0bcc
 .env

@@ -366,7 +366,6 @@ class HumanFeedbackManager:
         if content_id in data and 'drafts' in data[content_id]:
             return data[content_id]['drafts']
         return []
-
     def _generate_feedback_summary(self, feedback_items: List[Dict]) -> Dict[str, Any]:
         """Generate a summary of feedback items."""
         if not feedback_items:
