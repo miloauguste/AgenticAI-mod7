@@ -1,0 +1,61 @@
+{
+  "system_settings": {
+    "max_concurrent_jobs": 5,
+    "timeout_minutes": 60,
+    "quality_threshold": 75,
+    "auto_retry_failures": true,
+    "enable_analytics": true
+  },
+  "api_keys": {
+    "openai_required": false,
+    "serpapi_required": false,
+    "backup_research_enabled": true
+  },
+  "content_settings": {
+    "min_word_count": 500,
+    "max_word_count": 2000,
+    "default_tone": "professional",
+    "seo_optimization_level": "high"
+  },
+  "client_templates": {
+    "technology": {
+      "default_audience": "Technology professionals and decision-makers",
+      "content_pillars": [
+        "innovation",
+        "efficiency",
+        "scalability"
+      ],
+      "preferred_formats": [
+        "blog_post",
+        "case_study",
+        "whitepaper"
+      ]
+    },
+    "healthcare": {
+      "default_audience": "Healthcare administrators and medical professionals",
+      "content_pillars": [
+        "patient_care",
+        "compliance",
+        "efficiency"
+      ],
+      "preferred_formats": [
+        "blog_post",
+        "research_summary",
+        "best_practices"
+      ]
+    },
+    "finance": {
+      "default_audience": "Financial executives and analysts",
+      "content_pillars": [
+        "compliance",
+        "innovation",
+        "risk_management"
+      ],
+      "preferred_formats": [
+        "whitepaper",
+        "analysis",
+        "thought_leadership"
+      ]
+    }
+  }
+}
